@@ -5,17 +5,16 @@ A real-time flight management dashboard built with Next.js, TypeScript, and mode
 ## Features
 
 - Real-time flight status monitoring
-- Support for 400+ daily flights
 - Multiple flight types (Commercial, Military, Private)
 - Advanced search and filtering
 - User authentication and authorization
-- Real-time updates using WebSocket
-- Beautiful UI with Shadcn UI and Tailwind CSS
+- Real-time updates using Socket.io
+- Beautiful UI with Shadcn UI (Radix) and Tailwind CSS
 
 ## Tech Stack
 
 - **Frontend**: Next.js 14, TypeScript, Shadcn UI, Tailwind CSS
-- **Backend**: MongoDB, Redis, Kafka
+- **Backend**: MongoDB, Redis, Kafka, Next.js 14
 - **Infrastructure**: Docker, Docker Compose
 - **Authentication**: NextAuth.js
 - **Testing**: Jest
@@ -48,18 +47,17 @@ A real-time flight management dashboard built with Next.js, TypeScript, and mode
 │   ├── flights/       # Flight-related components
 │   └── ui/           # Shadcn UI components
 ├── lib/              # Utility functions and types
-├── public/           # Static assets
 └── docker-compose.yml # Docker services configuration
 ```
 ## Development
 
 ### Environment Setup
 
-1. Create a `.env.local` file:
+1. Create a `.env` file:
 ```env
 MONGODB_URI=mongodb://admin:password@localhost:27017
-REDIS_URL=redis://localhost:6379
-KAFKA_BROKERS=localhost:29092
+SERVER_HOST=localhost
+SERVER_PORT=3000
 ```
 
 2. Start the services:
@@ -67,9 +65,10 @@ KAFKA_BROKERS=localhost:29092
 docker-compose up -d
 ```
 
-3. Run database migrations:
+3. Run database seeders:
 ```bash
-npm run migrate
+npx tsx lib/seeders/users.ts
+npx tsx lib/seeders/flight.ts
 ```
 
 ### Testing
@@ -92,7 +91,7 @@ npm test
 npm run build
 ```
 
-2. Deploy using your preferred platform (Vercel, AWS, etc.)
+2. Deploy on preffered platform (Vercel, AWS, etc.)
 
 ## Contributing
 
