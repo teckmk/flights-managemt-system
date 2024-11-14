@@ -94,13 +94,15 @@ export default function FlightList({
       logger.info(`Socket data ${updatedFlight}`);
     });
 
-    socket?.on(flightChannel.FLIGHT_CREATE, (newFlight) => {
-      setFlights((prevFlights) => [
-        newFlight,
-        ...prevFlights.filter((f) => f.id !== newFlight.id),
-      ]);
-      logger.info(`Socket data ${newFlight}`);
-    });
+   socket?.on(flightChannel.FLIGHT_CREATE, (newFlights) => {
+     setFlights((prevFlights) => [
+       ...newFlights,
+       ...prevFlights.filter(
+         (f) => !newFlights.some((newFlight: Flight) => newFlight.id === f.id)
+       ), // Filter out existing flights with the same ID
+     ]);
+     logger.info(`Socket data: ${JSON.stringify(newFlights)}`);
+   });
   }, [socket]);
 
   useEffect(() => {

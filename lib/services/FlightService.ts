@@ -3,6 +3,7 @@ import FlightModel from "@/lib/db/models/Flight";
 import { cache } from "./RedisService";
 import { logger } from "@/lib/utils/logger";
 import { flightChannel } from "../constants/socket";
+import { randomInt } from "node:crypto";
 
 export class FlightService {
   private static readonly RETRY_ATTEMPTS = 3;
@@ -282,5 +283,94 @@ export class FlightService {
       .lean();
 
     return recentFlights;
+  }
+
+  /**
+   * Periodically generates random flights, saves them to the database, and emits an update on the socket.
+   */
+  static async generateRandomFlightsPeriodically(interval: number = 60000) {
+    const airlines = [
+      "American Airlines",
+      "Delta Air Lines",
+      "United Airlines",
+      "Southwest Airlines",
+      "JetBlue Airways",
+      "Alaska Airlines",
+      "Spirit Airlines",
+      "Frontier Airlines",
+      "Hawaiian Airlines",
+      "Allegiant Air",
+      "British Airways",
+      "Air Canada",
+      "Lufthansa",
+      "Emirates",
+      "Qatar Airways",
+    ];
+
+    const flightStatus = [
+      "Scheduled",
+      "Delayed",
+      "Cancelled",
+      "In-flight",
+      "Landed",
+    ];
+
+    const aircraftNames = [
+      "Boeing 737",
+      "Airbus A320",
+      "Embraer 175",
+      "Boeing 777",
+      "Airbus A350",
+      "Boeing 747",
+      "Airbus A380",
+      "Boeing 767",
+      "Airbus A330",
+      "Boeing 787 Dreamliner",
+      "Embraer 190",
+      "Bombardier CRJ200",
+      "McDonnell Douglas MD-80",
+      "Boeing 757",
+      "Airbus A221",
+      "Bombardier Q400",
+      "Boeing 727",
+      "Fokker 100",
+    ];
+
+    const origin = ["JFK", "LAX", "ORD", "ATL", "DFW", "DEN"];
+    const destination = ["SFO", "MIA", "SEA", "BOS", "PHX", "LAS"];
+    const type = ["Commercial", "Military", "Private"];
+
+    setInterval(async () => {
+      const numFlights = randomInt(1, 5); // Generate between 1 and 5 flights
+      const newFlights = [];
+
+      for (let i = 0; i < numFlights; i++) {
+        const airline = airlines[randomInt(0, airlines.length)];
+        const airlineCode = airline.split(" ")[0].slice(0, 2).toUpperCase(); // Get the airline code (first 2 letters)
+        const flightNumber = `${airlineCode}${randomInt(1000, 9999)}`; // Combine airline code and random number
+
+        const flightData = {
+          flightNumber: flightNumber,
+          airline: airline,
+          origin: origin[randomInt(0, origin.length)],
+          destination: destination[randomInt(0, destination.length)],
+          scheduledDeparture: new Date(Date.now() + randomInt(60000, 3600000)), // random departure time within 1 hour
+          scheduledArrival: new Date(Date.now() + randomInt(3600000, 7200000)), // random arrival time between 1 and 2 hours after departure
+          status: flightStatus[randomInt(0, flightStatus.length)],
+          type: type[randomInt(0, type.length)],
+          aircraft: aircraftNames[randomInt(0, aircraftNames.length)],
+          capacity: randomInt(100, 300),
+          passengers: randomInt(50, 300),
+        };
+
+        const flight = new FlightModel(flightData);
+        await flight.save();
+        newFlights.push(flight);
+      }
+
+      if (newFlights.length > 0) {
+        await this.emitFlightUpdate("created", newFlights);
+      }
+    }, interval);
   }
 }

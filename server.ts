@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import dotenv from "dotenv";
 import { logger } from "./lib/utils/logger";
 import { flightChannel } from "./lib/constants/socket";
+import { FlightService } from "./lib/services/FlightService";
 
 dotenv.config();
 
@@ -20,8 +21,9 @@ app.prepare().then(() => {
   const io = new Server(httpServer);
   globalThis.io = io;
 
+  FlightService.generateRandomFlightsPeriodically();
+
   io.on("connection", (socket) => {
-    socket.emit(flightChannel.FLIGHT_UPDATE, "cool");
     logger.info("Client connected:", socket.id);
 
     socket.on("disconnect", () => {
