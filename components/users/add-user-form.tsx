@@ -30,30 +30,33 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { UserPlus } from "lucide-react";
+import { UserPlus, Eye, EyeOff } from "lucide-react";
 
-const userFormSchema = z.object({
-  name: z.string().min(2).max(50),
-  email: z.string().email(),
-  role: z.enum(["Admin", "Manager", "Operator"]),
-  password: z
-    .string()
-    .min(8)
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-    ),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+const userFormSchema = z
+  .object({
+    name: z.string().min(2).max(50),
+    email: z.string().email(),
+    role: z.enum(["Admin", "Manager", "Operator"]),
+    password: z
+      .string()
+      .min(8)
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+      ),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 type UserFormValues = z.infer<typeof userFormSchema>;
 
 export default function AddUserForm() {
   const [open, setOpen] = useState(false);
   const { toast } = useToast();
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<UserFormValues>({
     resolver: zodResolver(userFormSchema),
@@ -65,6 +68,17 @@ export default function AddUserForm() {
       confirmPassword: "",
     },
   });
+
+  const generatePassword = () => {
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@$!%*?&";
+    const password = Array.from(
+      { length: 12 },
+      () => chars[Math.floor(Math.random() * chars.length)]
+    ).join("");
+    form.setValue("password", password);
+    form.setValue("confirmPassword", password);
+  };
 
   async function onSubmit(data: UserFormValues) {
     try {
@@ -174,9 +188,28 @@ export default function AddUserForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
-                  </FormControl>
+                  <div className="flex items-center space-x-2">
+                    <FormControl>
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        {...field}
+                      />
+                    </FormControl>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={generatePassword}
+                    >
+                      Generate
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff /> : <Eye />}
+                    </Button>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -188,9 +221,21 @@ export default function AddUserForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
-                  </FormControl>
+                  <div className="flex items-center space-x-2">
+                    <FormControl>
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        {...field}
+                      />
+                    </FormControl>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff /> : <Eye />}
+                    </Button>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
