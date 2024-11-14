@@ -25,7 +25,6 @@ const loginSchema = z.object({
 
 type LoginValues = z.infer<typeof loginSchema>;
 
-export const layout = null; // Skip layout for this page
 
 export default function LoginPage() {
 	const router = useRouter();

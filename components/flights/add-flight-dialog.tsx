@@ -61,7 +61,7 @@ export default function AddFlightDialog() {
       type: "Commercial",
       airline: "",
       aircraft: "",
-      capacity: "",
+      capacity: 0,
     },
   });
 

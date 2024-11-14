@@ -3,13 +3,12 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ScheduleTimeline from "@/components/schedule/schedule-timeline";
 import ScheduleList from "@/components/schedule/schedule-list";
-import AddScheduleFlight from "@/components/schedule/add-schedule-flight";
 
 export default function SchedulePage() {
   const [date, setDate] = useState<Date>(new Date());
@@ -33,10 +32,10 @@ export default function SchedulePage() {
 
         // Calculate overview counts
         const departures = data.filter(
-          (flight) => flight.type === "Departure"
+          (flight: { type: string }) => flight.type === "Departure"
         ).length;
         const arrivals = data.filter(
-          (flight) => flight.type === "Arrival"
+          (flight: { type: string }) => flight.type === "Arrival"
         ).length;
         setOverview({
           total: data.length,

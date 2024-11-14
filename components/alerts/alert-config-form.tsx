@@ -53,7 +53,7 @@ export default function AlertConfigForm() {
     resolver: zodResolver(alertConfigSchema),
     defaultValues: {
       flightType: "all",
-      delayThreshold: "15",
+      delayThreshold: 15,
       notifyEmail: true,
       notifyPush: true,
       notifySMS: false,
