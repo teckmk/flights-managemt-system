@@ -35,19 +35,34 @@ A real-time flight management dashboard built with Next.js, TypeScript, and mode
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
+5. Example user for login to app
+   ``` json
+   {
+      name: "John Doe",
+      email: "john.doe@flights.com",
+      password: "password123",
+      role: "Admin",
+      status: "active",
+    }
+   ```  
 ## Project Structure
 
 ```
-├── app/               # Next.js app directory
-│   ├── api/           # API routes
-│   ├── flights/       # Flight management pages
-│   └── page.tsx       # Dashboard page
-├── components/        # React components
-│   ├── dashboard/     # Dashboard-specific components
-│   ├── flights/       # Flight-related components
-│   └── ui/           # Shadcn UI components
-├── lib/              # Utility functions and types
-└── docker-compose.yml # Docker services configuration
+
+   ├── app/               # Next.js app directory
+   │   ├── api/           # API routes
+   │   ├── flights/       # Flight management pages
+   │   └── page.tsx       # Dashboard page
+   ├── components/        # React components
+   │   ├── dashboard/     # Dashboard-specific components
+   │   ├── flights/       # Flight-related components
+   │   └── ui/            # Shadcn UI components
+   ├── hooks/             # React hooks
+   │   ├── use-auth.ts     # Hook to manage auth
+   │   ├── use-socket.ts   # Hook for connecting to socket, and listening to messages
+   │   └── use-toast.ts    # Hook for toats
+   ├── lib/                # Utility functions, services and types
+   └── docker-compose.yml # Docker services configuration
 ```
 ## Development
 
