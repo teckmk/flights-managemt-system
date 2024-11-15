@@ -4,6 +4,7 @@ import { cache } from "./RedisService";
 import { logger } from "@/lib/utils/logger";
 import { flightChannel } from "../constants/socket";
 import { randomInt } from "node:crypto";
+import { connectDB } from "../db/mongodb";
 
 export class FlightService {
   private static readonly RETRY_ATTEMPTS = 3;
@@ -339,6 +340,8 @@ export class FlightService {
     const origin = ["JFK", "LAX", "ORD", "ATL", "DFW", "DEN"];
     const destination = ["SFO", "MIA", "SEA", "BOS", "PHX", "LAS"];
     const type = ["Commercial", "Military", "Private"];
+
+    await connectDB();
 
     setInterval(async () => {
       const numFlights = randomInt(1, 5); // Generate between 1 and 5 flights
